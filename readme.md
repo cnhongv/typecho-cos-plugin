@@ -48,7 +48,7 @@
 - **SecretId**：用于标识 API 调用者身份，可以简单类比为用户名。可从[API密钥管理](https://console.cloud.tencent.com/cam/capi)获取。
 - **SecretKey**：用于验证 API 调用者的身份，可以简单类比为密码。可从[API密钥管理](https://console.cloud.tencent.com/cam/capi)获取。
 - **所属地域**：在腾讯云服务器所在地域。详情参考[腾讯云文档](https://cloud.tencent.com/document/product/436/6224)
-- **存储桶名称**：COS服务中存储桶的名称。详情参考[腾讯云文档](https://cloud.tencent.com/document/product/436/41153)
+- **存储桶名称**：COS服务中存储桶的名称。详情参考[腾讯云文档](https://cloud.tencent.com/document/product/436/13312)
 - **对象存储路径**：文件存储的前缀，为更接近Typecho默认设置，本插件默认为`usr/uploads`，可根据实际情况自行修改
 - **访问域名**：存储桶的域名。详情参考[腾讯云文档](https://cloud.tencent.com/document/product/436/6224)
 - **在本地保存**：开启后，静态文件同步到腾讯云COS后在本地保存一份副本，会占用本地存储空间。
