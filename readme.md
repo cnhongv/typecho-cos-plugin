@@ -80,7 +80,7 @@
 
 ## 8.致谢
 
-- 该插件使用了腾讯云CODS官方SDK [COS-PHP-SDK-V5](https://github.com/tencentyun/cos-php-sdk-v5)
+- 该插件使用了腾讯云COS官方SDK [COS-PHP-SDK-V5](https://github.com/tencentyun/cos-php-sdk-v5)
 - 该插件参考了 Typecho 插件 [CosForTypecho](https://github.com/jqjiang819/typecho-plugin-cosfile)、Typecho主题 [Joe](https://github.com/HaoOuBa/Joe) 及 WordPress 插件 [tencentcloud-cos](https://github.com/Tencent-Cloud-Plugins/tencentcloud-wordpress-plugin-cos) 的部分实现方法，特此对其主创团队进行致谢。
 
 本项目由个人建设和维护，如有问题可以在Issues提交。
