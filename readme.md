@@ -30,7 +30,7 @@
 
 ### 3.1.部署方式：通过GitHub部署安装
 
-> 1. git clone https://github.com/cnhongv/TypechoCosPlugin
+> 1. `git clone https://github.com/cnhongv/typecho-cos-plugin`
 > 2. 复制TypechoCosPlugin文件夹到Typecho安装路径/usr/plugins/内
 
 ## 4.使用指引
