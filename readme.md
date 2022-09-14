@@ -43,6 +43,8 @@
 ![](./images/cos2.jpg)
 > 上图是额外配置，自定义访问域名、使用签名后的链接、本地删除同步删除COS文件、在本地保存、删除时同步删除本地备份
 
+可参考云加社区文档：[将 Typecho 图片/附件存储到 COS](https://cloud.tencent.com/developer/article/2069110)
+
 ### 4.2.名词解释
 > 以下部分内容来自[WordPress版腾讯云对象存储（COS）插件](https://github.com/Tencent-Cloud-Plugins/tencentcloud-wordpress-plugin-cos)
 - **SecretId**：用于标识 API 调用者身份，可以简单类比为用户名。可从[API密钥管理](https://console.cloud.tencent.com/cam/capi)获取。
