@@ -591,6 +591,7 @@ class Plugin implements PluginInterface
     return new \Qcloud\Cos\Client(array(
       'region' => $options->region,
       'schema' => 'https', #协议头部，默认为http
+      'userAgent' => 'typecho', #UA
       'credentials' => array(
         'secretId' => $options->secid,
         'secretKey' => $options->sekey
