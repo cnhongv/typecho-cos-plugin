@@ -39,10 +39,11 @@ if (!defined('pluginName')) {
  *
  * @package 腾讯云对象存储（COS）插件
  * @author susu
- * @version 1.0.1
+ * @version 1.0.2
  * @link https://github.com/cnhongv/TypechoCosPlugin
  * @dependence 1.1.2-*
  * @date 2022-08-08
+ * @update 2022-12-10
  */
 
 class Plugin implements PluginInterface
@@ -239,7 +240,7 @@ class Plugin implements PluginInterface
       ), 'open', _t('使用签名链接'), _t('生成带有签名的对象链接，有效期10分钟，可有效防盗链，建议开启<br>须将存储桶对应路径的访问权限设置为<b>私有读写</b>才真正有效，可参考 <a target="_blank" href="https://cloud.tencent.com/document/product/436/13327">官方文档</a>'));
       $sign->setAttribute('class', 'joe_content joe_advanced');
 
-      $remote_sync = new Select('sync', array(
+      $remote_sync = new Select('remote_sync', array(
         'open' => _t('开启'),
         'close' => _t('关闭'),
       ), 'open', _t('本地删除同步删除COS文件'), _t('在文件管理删除文件时，是否同步删除COS上的对应文件'));
@@ -251,7 +252,7 @@ class Plugin implements PluginInterface
       ), 'close', _t('在本地保存'), _t('在本地保存一份副本，会占用本地存储空间'));
       $local->setAttribute('class', 'joe_content joe_advanced');
 
-      $local_sync = new Select('local', array(
+      $local_sync = new Select('local_sync', array(
         'open' => _t('开启'),
         'close' => _t('关闭'),
       ), 'close', _t('删除时同步删除本地备份'), _t('在文件管理删除文件时，是否同步删除本地备份的对应文件（须开启“在本地保存”）'));
@@ -501,10 +502,10 @@ class Plugin implements PluginInterface
     $cosClient = self::CosInit();
     if ($opt->sign == 'open') {
       $url = $cosClient->getObjectUrl($opt->bucket, $content['attachment']->path, '+60 minutes');
-      return $url;
+      return self::setDomain($url);
     }
     $url = $cosClient->getObjectUrlWithoutSign($opt->bucket, $content['attachment']->path);
-    return $url;
+    return self::setDomain($url);
   }
 
   /**
@@ -519,10 +520,10 @@ class Plugin implements PluginInterface
     $cosClient = self::CosInit();
     if ($opt->sign == 'open') {
       $url = $cosClient->getObjectUrl($opt->bucket, $content['attachment']->path, '+60 minutes');
-      return $url;
+      return self::setDomain($url);
     }
     $url = $cosClient->getObjectUrlWithoutSign($opt->bucket, $content['attachment']->path);
-    return $url;
+    return self::setDomain($url);
   }
 
   /**
@@ -709,6 +710,19 @@ class Plugin implements PluginInterface
     $domain = $opt->domain;
     if (empty($domain))  $domain = 'https://' . $opt->bucket . '.cos.' . $opt->region . '.myqcloud.com';
     return $domain;
+  }
+
+  /**
+   * @description: 设置为自定义域名
+   * @return string
+   */
+  private static function setDomain($url)
+  {
+    $opt = Options::alloc()->plugin(pluginName);
+    $cos_url = 'https://' . $opt->bucket . '.cos.' . $opt->region . '.myqcloud.com';
+    $domain = $opt->domain;
+    if (!empty($domain))  $url = str_replace($cos_url, $domain, $url);
+    return $url;
   }
 
   /**
