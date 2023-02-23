@@ -39,11 +39,11 @@ if (!defined('pluginName')) {
  *
  * @package 腾讯云对象存储（COS）插件
  * @author susu
- * @version 1.0.2
+ * @version 1.0.3
  * @link https://github.com/cnhongv/TypechoCosPlugin
  * @dependence 1.1.2-*
  * @date 2022-08-08
- * @update 2022-12-10
+ * @update 2023-02-23
  */
 
 class Plugin implements PluginInterface
@@ -219,7 +219,7 @@ class Plugin implements PluginInterface
       $bucket->addRule('required', _t('存储桶名称不能为空！'));
 
 
-      $path = new Text('path', NULL, 'usr/uploads', _t('对象存储路径(必需)'), _t('默认为 usr/uploads，建议不要修改（无需以/开头）'));
+      $path = new Text('path', NULL, 'usr/uploads', _t('对象存储路径(必需)'), _t('默认为 usr/uploads，建议不要修改（无需以/开头）；若想设置为根目录请输入/'));
       $path->setAttribute('class', 'joe_content joe_base');
 
       $domain = new Text(
@@ -336,7 +336,7 @@ class Plugin implements PluginInterface
 
     #获取文件名
     $date = new \Typecho\Date($opt->gmtTime);
-    $fileDir = self::getUploadDir() . '/' . $date->year . '/' . $date->month;
+    $fileDir = self::getUploadDir() . $date->year . '/' . $date->month;
     $fileName = sprintf('%u', crc32(uniqid())) . '.' . $ext;
     $path = $fileDir . '/' . $fileName;
     #获得上传文件
@@ -682,6 +682,12 @@ class Plugin implements PluginInterface
   {
     $opt = Options::alloc()->plugin(pluginName);
     if ($opt->path) {
+      if($opt->path=='/'){
+        return '';
+      }
+      if(substr($opt->path, -strlen($opt->path))!=='/'){
+        $opt->path .='/';
+      }
       return $opt->path;
     } else if (defined('__TYPECHO_UPLOAD_DIR__')) {
       return __TYPECHO_UPLOAD_DIR__;

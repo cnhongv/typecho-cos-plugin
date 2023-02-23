@@ -13,7 +13,7 @@
 | ---------- | ------------------------------------------------------------ |
 | 中文名称   | 腾讯云对象存储（COS）插件                                  |
 | 英文名称   | Typecho-Cos-Plugin                                 |
-| 最新版本   | 1.0.2 (2022.12.10)                                     |
+| 最新版本   | 1.0.3 (2023.02.23)                                     |
 | 适用平台   | [Typecho](https://typecho.org/)                     |
 | 适用产品   | [腾讯云对象存储（COS）](https://cloud.tencent.com/product/cos)       |
 | GitHub项目 | [TypechoCosPlugin](https://github.com/cnhongv/typecho-cos-plugin) |
@@ -72,6 +72,9 @@
 > 4. 是否有开启防盗链功能；
 
 ## 7.版本迭代记录
+
+### 2023.02.23 TypechoCosPlugin v1.0.3
+- 优化：支持将附件目录设置为根目录
 
 ### 2022.12.10 TypechoCosPlugin v1.0.2
 - 修复bug：开启自定义域名不生效
