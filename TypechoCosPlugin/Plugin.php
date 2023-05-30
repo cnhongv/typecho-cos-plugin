@@ -39,11 +39,11 @@ if (!defined('pluginName')) {
  *
  * @package 腾讯云对象存储（COS）插件
  * @author susu
- * @version 1.0.3
+ * @version 1.0.4
  * @link https://github.com/cnhongv/TypechoCosPlugin
  * @dependence 1.1.2-*
  * @date 2022-08-08
- * @update 2023-02-23
+ * @update 2023-05-30
  */
 
 class Plugin implements PluginInterface
@@ -530,43 +530,53 @@ class Plugin implements PluginInterface
    * @description: 更新正文中的对象网址钩子
    * @return {*}
    */
-  public static function Widget_Archive_beforeRender()
-  {
-    ob_start(__CLASS__ . '::beforeRender');
-  }
-
-  /**
-   * @description: 更新正文中的对象网址（获得新的sign）
-   * @param string $text 页面html
-   * @return string
-   */
-  public static function beforeRender($text)
+  public static function Widget_Archive_beforeRender($archive)
   {
     $opt = Options::alloc()->plugin(pluginName);
     $cosClient = self::CosInit();
     if ($opt->sign == 'open') {
-      return preg_replace_callback(
-        '/https?:\/\/[-A-Za-z0-9+&@#\/\%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/\%=~_|]/i',
-        function ($matches) use ($opt, $cosClient) {
-          $url = $matches[0];
-          if (strpos($url, self::getDomain()) !== false) {
-            $expTime = explode('q-key-time%3D', $url);
-            if (sizeof($expTime) > 1) {
-              @$expTime = explode('%26q', $expTime[1])[0];
-              @$expTime = explode('%3B', $expTime)[1];
-              #未过期，不更新
-              if ($expTime > time()) {
-                return $url;
-              }
-            }
-            $path = str_replace(self::getDomain(), '', $url);
-            $url = $cosClient->getObjectUrl($opt->bucket, explode('?', $path)[0], '+10 minutes');
+      if(gettype($archive->stack)!=='NULL'){
+        foreach($archive->stack as $index=>$con){
+          if(array_key_exists('text', $con)){
+              $archive->stack[$index]['text'] = self::refresh_cdn_url($opt, $cosClient, $con['text']);
           }
-          return $url;
-        },
-        $text
-      );
+          $archive->next(); 
+        }
+      }
+      $archive->text =  self::refresh_cdn_url($opt, $cosClient, $archive->text);
     }
+  }
+
+  /**
+   * @description: 更新正文中的对象网址（获得新的sign）
+   * @param object $opt 插件信息
+   * @param object $cosClient cos实例
+   * @param string $text 页面html
+   * @return string
+   */
+  public static function refresh_cdn_url($opt, $cosClient, $text)
+  {
+    $text = preg_replace_callback(
+      '/https?:\/\/[-A-Za-z0-9+&@#\/\%?=~_|!:,.;]+[-A-Za-z0-9+&@#\/\%=~_|]/i',
+      function ($matches) use ($opt, $cosClient) {
+        $url = $matches[0];
+        if (strpos($url, self::getDomain()) !== false) {
+          $expTime = explode('q-key-time%3D', $url);
+          if (sizeof($expTime) > 1) {
+            @$expTime = explode('%26q', $expTime[1])[0];
+            @$expTime = explode('%3B', $expTime)[1];
+            #未过期，不更新
+            if ($expTime > time()) {
+              return $url;
+            }
+          }
+          $path = str_replace(self::getDomain(), '', $url);
+          $url = $cosClient->getObjectUrl($opt->bucket, explode('?', $path)[0], '+10 minutes');
+        }
+        return $url;
+      },
+      $text
+    );
     return $text;
   }
 
