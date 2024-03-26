@@ -426,10 +426,11 @@ class Plugin implements PluginInterface
 
         /* 上传到COS */
         $cosClient = self::CosInit();
+        $cosKey = str_replace('/usr/uploads/', self::getUploadDir(), $content['attachment']->path);
         try {
             $cosClient->upload(
                 $bucket = $opt->bucket,
-                $key = $path,
+                $key = $cosKey,
                 $body = fopen($uploadfile, 'rb'),
                 $options = array(
                     "ACL" => 'public-read',
@@ -480,11 +481,12 @@ class Plugin implements PluginInterface
         if ($opt->remote_sync == 'open') {
             #初始化COS
             $cosClient = self::CosInit();
+            $cosKey = str_replace('/usr/uploads/', self::getUploadDir(), $content['attachment']->path);
             try {
                 $result = $cosClient->deleteObject(array(
                     #bucket的命名规则为{name}-{appid} ，此处填写的存储桶名称必须为此格式
                     'Bucket' => $opt->bucket,
-                    'Key' => $content['attachment']->path
+                    'Key' => $cosKey
                 ));
             } catch (Exception $e) {
                 echo "$e\n";
