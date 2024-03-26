@@ -504,11 +504,12 @@ class Plugin implements PluginInterface
         #获取设置参数
         $opt = Options::alloc()->plugin(pluginName);
         $cosClient = self::CosInit();
+        $path = str_replace('/usr/uploads/', self::getUploadDir(), $content['attachment']->path);
         if ($opt->sign == 'open') {
-            $url = $cosClient->getObjectUrl($opt->bucket, $content['attachment']->path, '+60 minutes');
+            $url = $cosClient->getObjectUrl($opt->bucket, $path, '+60 minutes');
             return self::setDomain($url);
         }
-        $url = $cosClient->getObjectUrlWithoutSign($opt->bucket, $content['attachment']->path);
+        $url = $cosClient->getObjectUrlWithoutSign($opt->bucket, $path);
         return self::setDomain($url);
     }
 
@@ -522,11 +523,12 @@ class Plugin implements PluginInterface
         #获取设置参数
         $opt = Options::alloc()->plugin(pluginName);
         $cosClient = self::CosInit();
+        $path = str_replace('/usr/uploads/', self::getUploadDir(), $content['attachment']->path);
         if ($opt->sign == 'open') {
-            $url = $cosClient->getObjectUrl($opt->bucket, $content['attachment']->path, '+60 minutes');
+            $url = $cosClient->getObjectUrl($opt->bucket, $path, '+60 minutes');
             return self::setDomain($url);
         }
-        $url = $cosClient->getObjectUrlWithoutSign($opt->bucket, $content['attachment']->path);
+        $url = $cosClient->getObjectUrlWithoutSign($opt->bucket, $path);
         return self::setDomain($url);
     }
 
