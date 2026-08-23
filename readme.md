@@ -73,9 +73,10 @@
 
 ## 7.版本迭代记录
 
-### 2026.08.24 TypechoCosPlugin v1.0.6
+### 2026.08.24 TypechoCosPlugin v1.1.0
 - 修复：部分情况下偶现 Missing Plugin echo-pluginName 的问题
-- 优化：移除冗余样式代码，且适配原版后台的同时，支持 BooAdmin 后台主题设计
+- 优化：移除冗余样式代码
+- 优化：支持 BooAdmin 后台主题的同时，兼容 Typecho 默认后台主题
 - 优化：cos-sdk更新至v2.6.17
 
 ### 2026.06.19 TypechoCosPlugin v1.0.5
@@ -105,8 +106,8 @@
 
 - 该插件使用了腾讯云COS官方SDK [COS-PHP-SDK-V5](https://github.com/tencentyun/cos-php-sdk-v5)
 - 该插件参考了下列插件和主题的部分实现方法，特此对其主创团队进行致谢。
-Typecho 插件 [CosForTypecho](https://github.com/jqjiang819/typecho-plugin-cosfile)
-Typecho 主题 [BooAdmin](https://github.com/little-gt/BooAdmin) 
+Typecho 插件项目 [CosForTypecho](https://github.com/jqjiang819/typecho-plugin-cosfile)
+Typecho 后台主题 [BooAdmin](https://github.com/little-gt/BooAdmin) 
 WordPress 插件 [tencentcloud-cos](https://github.com/Tencent-Cloud-Plugins/tencentcloud-wordpress-plugin-cos) 
 
 ---

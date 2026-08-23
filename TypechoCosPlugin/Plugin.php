@@ -84,7 +84,7 @@ class Plugin implements PluginInterface
   public static function config(Form $form)
   {
 ?>
-    <script src="<?php echo  Helper::options()->rootUrl . '/usr/plugins/' . pluginName; ?>/statics/interact.js?v=2"></script>
+    <script src="<?php echo  Helper::options()->rootUrl . '/usr/plugins/' . pluginName; ?>/statics/interact.js?v=3"></script>
     <div id="cos-plugin-panel" class="cos-panel">
       <div class="cos-panel__aside">
         <div class="cos-panel__logo">腾讯云COS</div>

@@ -7,7 +7,7 @@
   "use strict";
 
   var COS_CSS = [
-    ":host{display:block;box-sizing:border-box;width:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;font-size:14px;line-height:1.6;color:#1f2329;--cos-bg:#fff;--cos-surface:#fff;--cos-surface-2:#f2f3f5;--cos-border:#d0d3d6;--cos-border-light:#e5e6eb;--cos-text:#1f2329;--cos-text-weak:#646a73;--cos-primary:#2b6fff;--cos-primary-hover:#1d5be0;--cos-success:#1f9d55;--cos-warning:#d97706;--cos-danger:#d93636;--cos-danger-hover:#b42b2b;--cos-radius:0px;--cos-shadow:0 1px 3px rgba(0,0,0,.08)}",
+    ":host{display:block;box-sizing:border-box;width:100%;max-width:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;font-size:14px;line-height:1.6;color:#1f2329;--cos-bg:#fff;--cos-surface:#fff;--cos-surface-2:#f2f3f5;--cos-border:#d0d3d6;--cos-border-light:#e5e6eb;--cos-text:#1f2329;--cos-text-weak:#646a73;--cos-primary:#2b6fff;--cos-primary-hover:#1d5be0;--cos-success:#1f9d55;--cos-warning:#d97706;--cos-danger:#d93636;--cos-danger-hover:#b42b2b;--cos-radius:0px;--cos-shadow:0 1px 3px rgba(0,0,0,.08)}",
     ":host(:not(:root)){color-scheme:light}",
     "@media (prefers-color-scheme:dark){:host{color:#e6e8eb;--cos-bg:#16181c;--cos-surface:#1e2127;--cos-surface-2:#262a31;--cos-border:#3a3f47;--cos-border-light:#2c3037;--cos-text:#e6e8eb;--cos-text-weak:#9aa1ab;--cos-primary:#4d8bff;--cos-primary-hover:#6ba0ff;--cos-success:#3fb950;--cos-warning:#e3a008;--cos-danger:#f06d6d;--cos-danger-hover:#ff8585;--cos-shadow:0 1px 3px rgba(0,0,0,.4)}:host(:not(:root)){color-scheme:dark}}",
     "*,*::before,*::after{box-sizing:border-box}",
@@ -86,12 +86,28 @@
     /* 移动端：上下堆叠，侧栏横向标签 */
     "@media (max-width:768px){.cos-panel{flex-direction:column;gap:12px}.cos-panel__aside{position:static;flex:1 1 auto;max-width:100%;width:100%}.cos-panel__tabs{display:flex;gap:8px}.cos-panel__tab{flex:1;height:38px;line-height:38px;margin-bottom:0;font-size:13px}.cos-panel__backup{flex-direction:row}.cos-panel__backup input{flex:1}.cos-panel__notice,.cos-field-form{margin-left:0;padding:18px}.cos-field-form>.typecho-option{padding:14px}}",
     /* 超窄屏：进一步收紧内边距，标签/输入全宽 */
-    "@media (max-width:480px){.cos-panel__aside{padding-bottom:4px}.cos-panel__logo{font-size:15px;padding:12px 8px}.cos-panel__tabs{gap:6px}.cos-panel__tab{font-size:12px;height:34px;line-height:34px}.cos-field-form,.cos-panel__notice{padding:14px}.cos-field-form>.typecho-option{padding:12px}.cos-field-form .typecho-label,.cos-field-form label.typecho-label{font-size:13px;padding:6px 10px}.cos-field-form .typecho-option-submit button,.cos-field-form .typecho-option-submit input[type=submit]{min-width:120px;height:38px;padding:0 16px;font-size:13px}}"
+    "@media (max-width:480px){.cos-panel__aside{padding-bottom:4px}.cos-panel__logo{font-size:15px;padding:12px 8px}.cos-panel__tabs{gap:6px}.cos-panel__tab{font-size:12px;height:34px;line-height:34px}.cos-field-form,.cos-panel__notice{padding:14px}.cos-field-form>.typecho-option{padding:12px}.cos-field-form .typecho-label,.cos-field-form label.typecho-label{font-size:13px;padding:6px 10px}.cos-field-form .typecho-option-submit button,.cos-field-form .typecho-option-submit input[type=submit]{min-width:120px;height:38px;padding:0 16px;font-size:13px}}",
+    /* ====== 超宽屏：覆盖整个可用宽度，字段卡片两列网格排布避免留白 ====== */
+    "@media (min-width:1600px){.cos-panel__aside{flex:0 0 260px;max-width:260px}.cos-panel__logo{font-size:20px;padding:22px 14px}.cos-field-form,.cos-panel__notice{padding:32px}.cos-field-form{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}.cos-field-form>.typecho-option{margin-bottom:0}.cos-field-form .typecho-option-submit{grid-column:1 / -1}}",
+    "@media (min-width:2200px){.cos-panel__aside{flex:0 0 300px;max-width:300px}.cos-field-form{grid-template-columns:1fr 1fr 1fr;gap:20px}.cos-field-form,.cos-panel__notice{padding:40px}}"
   ].join("");
 
   function initCosPanel() {
     var panel = document.getElementById("cos-plugin-panel");
     if (!panel || panel.shadowRoot) return;
+
+    // 突破原版后台 .container / 其它限制最大宽度的祖先容器，
+    // 让面板在超宽屏下覆盖整个可用宽度（不修改后台核心文件）
+    (function breakWidthLimit(el) {
+      while (el && el.parentNode && el.parentNode.nodeType === 1) {
+        el = el.parentNode;
+        var cls = el.className && el.className.baseVal !== undefined ? el.className.baseVal : el.className;
+        if (typeof cls === "string" && (cls.indexOf("container") !== -1 || cls === "body" || cls === "typecho-page-main")) {
+          el.style.maxWidth = "none";
+          el.style.width = "100%";
+        }
+      }
+    })(panel);
 
     // ── 1) Shadow DOM 隔离 ──
     var shadow = panel.attachShadow({ mode: "open" });
