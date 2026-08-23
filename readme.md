@@ -4,16 +4,16 @@
 
 - 依赖 PHP 5.6+ 环境
 
-- 已测试Typecho版本：1.2.0、1.3.0
+- 已测试Typecho版本：1.2.1、1.3.0
 
 ## 1.插件介绍
-> Typecho COS插件是由苏苏开发的，提供给Typecho用户使用的插件。实现网站静态资源存储到腾讯云COS，有效降低本地存储负载，提升用户体验。
+> 一款 Typecho 插件，可实现网站静态资源存储到腾讯云 COS 当中，从而实现降低本地存储负载以及优化静态资源加载速度的目的，进而提升用户体验。
 
 | 标题       | 名称                                                         |
 | ---------- | ------------------------------------------------------------ |
 | 中文名称   | 腾讯云对象存储（COS）插件                                  |
 | 英文名称   | Typecho-Cos-Plugin                                 |
-| 最新版本   | 1.0.5 (2026.06.19)                                   |
+| 最新版本   | 1.0.6 (2026.08.24)                                   |
 | 适用平台   | [Typecho](https://typecho.org/)                     |
 | 适用产品   | [腾讯云对象存储（COS）](https://cloud.tencent.com/product/cos)       |
 | GitHub项目 | [TypechoCosPlugin](https://github.com/cnhongv/typecho-cos-plugin) |
@@ -37,10 +37,10 @@
 
 ### 4.1.界面功能介绍
 
-![](./images/cos1.jpg)
+![图1](./images/cos1.png)
 > 上图主要是配置COS插件的腾讯云基本参数，包括secretId、secretKey、所属地域、存储桶名称、对象存储路径
 
-![](./images/cos2.jpg)
+![图2](./images/cos2.png)
 > 上图是额外配置，自定义访问域名、使用签名后的链接、本地删除同步删除COS文件、在本地保存、删除时同步删除本地备份
 
 可参考云加社区文档：[将 Typecho 图片/附件存储到 COS](https://cloud.tencent.com/developer/article/2069110)
@@ -73,6 +73,11 @@
 
 ## 7.版本迭代记录
 
+### 2026.08.24 TypechoCosPlugin v1.0.6
+- 修复：部分情况下偶现 Missing Plugin echo-pluginName 的问题
+- 优化：移除冗余样式代码，且适配原版后台的同时，支持 BooAdmin 后台主题设计
+- 优化：cos-sdk更新至v2.6.17
+
 ### 2026.06.19 TypechoCosPlugin v1.0.5
 - 修复：在typecho1.3.0版本下，导致server error的问题
 - 优化：cos-sdk更新至v2.6.16
@@ -99,6 +104,11 @@
 ## 8.致谢
 
 - 该插件使用了腾讯云COS官方SDK [COS-PHP-SDK-V5](https://github.com/tencentyun/cos-php-sdk-v5)
-- 该插件参考了 Typecho 插件 [CosForTypecho](https://github.com/jqjiang819/typecho-plugin-cosfile)、Typecho主题 [Joe](https://github.com/HaoOuBa/Joe) 及 WordPress 插件 [tencentcloud-cos](https://github.com/Tencent-Cloud-Plugins/tencentcloud-wordpress-plugin-cos) 的部分实现方法，特此对其主创团队进行致谢。
+- 该插件参考了下列插件和主题的部分实现方法，特此对其主创团队进行致谢。
+Typecho 插件 [CosForTypecho](https://github.com/jqjiang819/typecho-plugin-cosfile)
+Typecho 主题 [BooAdmin](https://github.com/little-gt/BooAdmin) 
+WordPress 插件 [tencentcloud-cos](https://github.com/Tencent-Cloud-Plugins/tencentcloud-wordpress-plugin-cos) 
+
+---
 
 本项目由个人建设和维护，如有问题可以在Issues提交。

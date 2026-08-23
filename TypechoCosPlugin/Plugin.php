@@ -35,11 +35,11 @@ if (!defined('pluginName')) {
 }
 
 /**
- *  由苏苏开发，提供给Typecho用户使用的插件。<br>实现网站静态资源存储到腾讯云COS，有效降低本地存储负载，提升用户体验。
+ *  一款 Typecho 插件，可实现网站静态资源存储到腾讯云 COS 当中，从而实现降低本地存储负载以及优化静态资源加载速度的目的，进而提升用户体验。
  *
  * @package 腾讯云对象存储（COS）插件
- * @author susu
- * @version 1.0.5
+ * @author susu & little-gt
+ * @version 1.1.0
  * @link https://github.com/cnhongv/typecho-cos-plugin
  * @dependence 1.2.1-1.3.0
  * @date 2022-08-08
@@ -84,16 +84,14 @@ class Plugin implements PluginInterface
   public static function config(Form $form)
   {
 ?>
-    <link rel="stylesheet" href="<?php echo Helper::options()->rootUrl . '/usr/plugins/' . pluginName; ?>/statics/css/joe.config.min.css">
-    <script src="<?php echo  Helper::options()->rootUrl . '/usr/plugins/' . pluginName; ?>/statics/js/joe.config.min.js"></script>
-    <div class="joe_config">
-      <div>
-        <div class="joe_config__aside">
-          <div class="logo">腾讯云COS</div>
-          <ul class="tabs">
-            <li class="item" data-current="joe_notice">使用说明</li>
-            <li class="item" data-current="joe_base">基础设置</li>
-            <li class="item" data-current="joe_advanced">高级设置</li>
+    <script src="<?php echo  Helper::options()->rootUrl . '/usr/plugins/' . pluginName; ?>/statics/interact.js?v=2"></script>
+    <div id="cos-plugin-panel" class="cos-panel">
+      <div class="cos-panel__aside">
+        <div class="cos-panel__logo">腾讯云COS</div>
+          <ul class="cos-panel__tabs">
+            <li class="cos-panel__tab" data-current="cos_notice">使用说明</li>
+            <li class="cos-panel__tab" data-current="cos_base">基础设置</li>
+            <li class="cos-panel__tab" data-current="cos_advanced">高级设置</li>
           </ul>
           <?php
           $pluginName = explode('\\', __CLASS__)[1];
@@ -104,7 +102,7 @@ class Plugin implements PluginInterface
               if ($db->fetchRow($db->select()->from('table.options')->where('name = ?', 'plugin:' . $pluginName . '_backup'))) {
                 $db->query($db->update('table.options')->rows(array('value' => $value))->where('name = ?', 'plugin:' . $pluginName . '_backup')); ?>
                 <script>
-                  alert("备份更新成功！");
+                  sessionStorage.setItem('cos_msg',"备份更新成功！");
                   window.location.href = '<?php Helper::options()->adminUrl('options-plugin.php?config=' . $pluginName); ?>'
                 </script>
               <?php } else { ?>
@@ -113,7 +111,7 @@ class Plugin implements PluginInterface
                   $db->query($db->insert('table.options')->rows(array('name' => 'plugin:' . $pluginName . '_backup', 'user' => '0', 'value' => $value)));
                 ?>
                   <script>
-                    alert("备份成功！");
+                    sessionStorage.setItem('cos_msg',"备份成功！");
                     window.location.href = '<?php Helper::options()->adminUrl('options-plugin.php?config=' . $pluginName); ?>'
                   </script>
                 <?php }
@@ -124,12 +122,12 @@ class Plugin implements PluginInterface
                 $_value = $db->fetchRow($db->select()->from('table.options')->where('name = ?', 'plugin:' . $pluginName . '_backup'))['value'];
                 $db->query($db->update('table.options')->rows(array('value' => $_value))->where('name = ?', 'plugin:' . $pluginName)); ?>
                 <script>
-                  alert("还原成功！");
+                  sessionStorage.setItem('cos_msg',"还原成功！");
                   window.location.href = '<?php Helper::options()->adminUrl('options-plugin.php?config=' . $pluginName); ?>'
                 </script>
               <?php } else { ?>
                 <script>
-                  alert("未备份过数据，无法恢复！");
+                  sessionStorage.setItem('cos_msg',"未备份过数据，无法恢复！");
                   window.location.href = '<?php Helper::options()->adminUrl('options-plugin.php?config=' . $pluginName); ?>'
                 </script>
               <?php } ?>
@@ -138,26 +136,25 @@ class Plugin implements PluginInterface
               if ($db->fetchRow($db->select()->from('table.options')->where('name = ?', 'plugin:' . $pluginName . '_backup'))) {
                 $db->query($db->delete('table.options')->where('name = ?', 'plugin:' . $pluginName . '_backup')); ?>
                 <script>
-                  alert("删除成功");
+                  sessionStorage.setItem('cos_msg',"删除成功");
                   window.location.href = '<?php Helper::options()->adminUrl('options-plugin.php?config=' . $pluginName); ?>'
                 </script>
               <?php } else { ?>
                 <script>
-                  alert("没有备份内容，无法删除！");
+                  sessionStorage.setItem('cos_msg',"没有备份内容，无法删除！");
                   window.location.href = '<?php Helper::options()->adminUrl('options-plugin.php?config=' . $pluginName); ?>'
                 </script>
               <?php } ?>
             <?php } ?>
           <?php } ?>
-          <form class="backup" action="?config=<? echo $pluginName; ?>" method="post">
+          <form class="cos-panel__backup" action="?config=<?php echo $pluginName; ?>" method="post">
             <input type="submit" name="type" value="备份设置" />
             <input type="submit" name="type" value="还原备份" />
             <input type="submit" name="type" value="删除备份" />
           </form>
         </div>
-      </div>
-      <span id="joe_version" style="display: none;"></span>
-      <div class="joe_config__notice">
+      <span id="cos-plugin-version" style="display: none;"></span>
+      <div class="cos-panel__notice">
         <p class="title">使用说明</p>
         <ol>
           <?php
@@ -174,11 +171,9 @@ class Plugin implements PluginInterface
       <?php
 
       $secid = new Text('secid', NULL, '', _t('SecretId(必需)'), _t('腾讯云控制台 <a target="_blank" href="https://console.cloud.tencent.com/capi">个人API密钥</a> 获取 SecretId'));
-      $secid->setAttribute('class', 'joe_content joe_base');
       $secid->addRule('required', _t('SecretId不能为空！'));
 
       $sekey = new Text('sekey', NULL, '', _t('SecretKey(必需)'), _t('腾讯云控制台 <a target="_blank" href="https://console.cloud.tencent.com/capi">个人API密钥</a> 获取 SecretKey'));
-      $sekey->setAttribute('class', 'joe_content joe_base');
       $sekey->addRule('required', _t('SecretKey不能为空！'));
 
       $region = new Select(
@@ -212,15 +207,12 @@ class Plugin implements PluginInterface
         'ap-beijing-1',
         _t('所属地域(必需)')
       );
-      $region->setAttribute('class', 'joe_content joe_base');
 
       $bucket = new Text('bucket', NULL, '', _t('存储桶名称(必需)'), _t('格式为 BucketName-Appid ，如 typecho-12345678 ,可在 <a target="_blank" href="https://console.cloud.tencent.com/cos/bucket">腾讯云控制台</a> 获取'));
-      $bucket->setAttribute('class', 'joe_content joe_base');
       $bucket->addRule('required', _t('存储桶名称不能为空！'));
 
 
       $path = new Text('path', NULL, 'usr/uploads', _t('对象存储路径(必需)'), _t('默认为 usr/uploads，建议不要修改（无需以/开头）；若想设置为根目录请输入/'));
-      $path->setAttribute('class', 'joe_content joe_base');
 
       $domain = new Text(
         'domain',
@@ -232,32 +224,51 @@ class Plugin implements PluginInterface
         可使用自定义CDN域名，例如：https://cos.example.com（需以 https:// 或 https:// 开头）,如需配置可参考 <a target="_blank" href="https://cloud.tencent.com/document/product/436/36637">官方文档</a>
         ')
       );
-      $domain->setAttribute('class', 'joe_content joe_advanced');
 
       $sign = new Select('sign', array(
         'open' => _t('开启(建议)'),
         'close' => _t('关闭'),
-      ), 'open', _t('使用签名链接'), _t('生成带有签名的对象链接，有效期10分钟，可有效防盗链，建议开启<br>须将存储桶对应路径的访问权限设置为<b>私有读写</b>才真正有效，可参考 <a target="_blank" href="https://cloud.tencent.com/document/product/436/13327">官方文档</a>'));
-      $sign->setAttribute('class', 'joe_content joe_advanced');
+      ), 'open', _t('使用签名链接'), _t('生成带有签名的对象链接，有效期10分钟，可有效防盗链，建议开启<br>须将存储桶对应路径的访问权限设置为<b>私有读写</b>才真正有效，可参考 <a target="_blank" href="https://cloud.tencent.com/document/product/436/13327">官方文档</a>')      );
 
       $remote_sync = new Select('remote_sync', array(
         'open' => _t('开启'),
         'close' => _t('关闭'),
-      ), 'open', _t('本地删除同步删除COS文件'), _t('在文件管理删除文件时，是否同步删除COS上的对应文件'));
-      $remote_sync->setAttribute('class', 'joe_content joe_advanced');
+      ), 'open', _t('本地删除同步删除COS文件'), _t('在文件管理删除文件时，是否同步删除COS上的对应文件')      );
 
       $local = new Select('local', array(
         'open' => _t('开启'),
         'close' => _t('关闭'),
-      ), 'close', _t('在本地保存'), _t('在本地保存一份副本，会占用本地存储空间'));
-      $local->setAttribute('class', 'joe_content joe_advanced');
+      ), 'close', _t('在本地保存'), _t('在本地保存一份副本，会占用本地存储空间')      );
 
       $local_sync = new Select('local_sync', array(
         'open' => _t('开启'),
         'close' => _t('关闭'),
-      ), 'close', _t('删除时同步删除本地备份'), _t('在文件管理删除文件时，是否同步删除本地备份的对应文件（须开启“在本地保存”）'));
-      $local_sync->setAttribute('class', 'joe_content joe_advanced');
+      ), 'close', _t('删除时同步删除本地备份'), _t('在文件管理删除文件时，是否同步删除本地备份的对应文件（须开启“在本地保存”）')      );
 
+
+      // 在 PHP 端就确定每个字段的分组，渲染到 <input> 的 data-cos-group 属性，
+      // 由 JS 端精确匹配，彻底摆脱运行时对 ul.id / 标签名的脆弱探测
+      $cosGroupMap = array(
+        'secid'      => 'base',
+        'sekey'      => 'base',
+        'region'     => 'base',
+        'bucket'     => 'base',
+        'path'       => 'base',
+        'domain'     => 'advanced',
+        'sign'       => 'advanced',
+        'remote_sync'=> 'advanced',
+        'local'      => 'advanced',
+        'local_sync' => 'advanced',
+      );
+      foreach ($cosGroupMap as $cosField => $cosG) {
+        if (isset($$cosField)) {
+          $$cosField->setAttribute('data-cos-group', $cosG);
+        }
+      }
+
+      // 字段表单本身加上样式钩子 class（渲染为 <form class="cos-field-form">），
+      // 不再依赖 JS 运行时查找并动态添加，彻底消除 fieldForm 为 null 的风险
+      $form->setAttribute('class', 'cos-field-form');
 
       $form->addInput($secid);
       $form->addInput($sekey);
@@ -271,14 +282,6 @@ class Plugin implements PluginInterface
       $form->addInput($local_sync);
 
       ?>
-      <script>
-        window.onload = function() {
-          //document.getElementsByName("desc")[0].type = "hidden";
-          if (document.getElementsByClassName("message error").length > 0) {
-            alert("有必填项未填写！")
-          }
-        }
-      </script>
   <?php
   }
 
@@ -605,10 +608,10 @@ class Plugin implements PluginInterface
     }
     if (self::compareVersion('7.2.5') < 0) {
       # PHP 5.6 - 7.1 使用旧版SDK
-      require_once 'phar://' . __DIR__ . '/phar/cos-sdk-v5-6.phar/vendor/autoload.php';
+      require_once 'phar://' . __DIR__ . '/statics/cos-sdk-v5-6.phar/vendor/autoload.php';
     } else {
       # PHP 7.2+ (含 8.x / 8.5) 使用新版SDK
-      require_once 'phar://' . __DIR__ . '/phar/cos-sdk-v5-7.phar/vendor/autoload.php';
+      require_once 'phar://' . __DIR__ . '/statics/cos-sdk-v5-7.phar/vendor/autoload.php';
     }
 
     return new \Qcloud\Cos\Client(array(
