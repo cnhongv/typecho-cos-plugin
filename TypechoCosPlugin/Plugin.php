@@ -43,7 +43,7 @@ if (!defined('pluginName')) {
  * @link https://github.com/cnhongv/typecho-cos-plugin
  * @dependence 1.2.1-1.3.0
  * @date 2022-08-08
- * @update 2026-06-19
+ * @update 2026-08-24
  */
 
 class Plugin implements PluginInterface
@@ -84,7 +84,7 @@ class Plugin implements PluginInterface
   public static function config(Form $form)
   {
 ?>
-    <script src="<?php echo  Helper::options()->rootUrl . '/usr/plugins/' . pluginName; ?>/statics/interact.js?v=3"></script>
+    <script src="<?php echo  Helper::options()->rootUrl . '/usr/plugins/' . pluginName; ?>/statics/interact.js"></script>
     <div id="cos-plugin-panel" class="cos-panel">
       <div class="cos-panel__aside">
         <div class="cos-panel__logo">腾讯云COS</div>
@@ -167,6 +167,7 @@ class Plugin implements PluginInterface
           <li>插件会自动替换之前文件的链接，若启用插件前已上传文件，为保证正常显示，请自行将其上传至COS相同路径<br></li>
           <li>禁用插件会恢复为本地路径，为保证正常显示，请自行将数据从COS下载至相同路径<br></li>
         </ol>
+      </div>
       </div>
       <?php
 

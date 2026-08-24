@@ -13,7 +13,7 @@
 | ---------- | ------------------------------------------------------------ |
 | 中文名称   | 腾讯云对象存储（COS）插件                                  |
 | 英文名称   | Typecho-Cos-Plugin                                 |
-| 最新版本   | 1.0.6 (2026.08.24)                                   |
+| 最新版本   | 1.1.0 (2026.08.24)                                   |
 | 适用平台   | [Typecho](https://typecho.org/)                     |
 | 适用产品   | [腾讯云对象存储（COS）](https://cloud.tencent.com/product/cos)       |
 | GitHub项目 | [TypechoCosPlugin](https://github.com/cnhongv/typecho-cos-plugin) |

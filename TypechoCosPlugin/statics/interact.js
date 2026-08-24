@@ -144,7 +144,6 @@
 
     // ── 4) 绑定元素引用 ──
     var tabs = container.querySelectorAll(".cos-panel__tab");
-    var notice = container.querySelector(".cos-panel__notice");
 
     // ── 5) 模态弹窗 ──
     var mask = document.createElement("div");
@@ -205,8 +204,18 @@
 
     for (var t = 0; t < tabs.length; t++) {
       (function (tab) {
-        tab.addEventListener("click", function () {
+        tab.setAttribute("role", "button");
+        tab.setAttribute("tabindex", "0");
+        function activate() {
           switchTab(tab.getAttribute("data-current"));
+        }
+        tab.addEventListener("click", activate);
+        tab.addEventListener("keydown", function (e) {
+          var k = e.key || e.code;
+          if (k === "Enter" || k === " " || k === "Spacebar") {
+            e.preventDefault();
+            activate();
+          }
         });
       })(tabs[t]);
     }
